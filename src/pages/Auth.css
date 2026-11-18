@@ -61,3 +61,12 @@
 }
 
 .field input[type="datetime-local"] { cursor: pointer; }
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #ddd;
+}
+.detail-row span:first-child { font-weight: 500; }

@@ -2,7 +2,7 @@
 .home-header { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
 .search-bar { flex: 1; padding: 10px 16px; border: 2px solid #333; border-radius: 999px; font-size: 16px; }
 .ride-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.ride-card { border: 2px solid #333; border-radius: 16px; padding: 16px; }
+.ride-card { border: 2px solid #333; border-radius: 16px; padding: 16px; display: block; text-decoration: none;}
 .ride-poster { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #333;
           display: inline-flex; align-items: center; justify-content: center; }

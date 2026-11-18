@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Verify from "./pages/Verify";
 import CreateRide from "./pages/CreateRide";
+import RideDetail from "./pages/RideDetail";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/create" element={<CreateRide />} />
+        <Route path="/rides/:id" element={<RideDetail />} />
       </Routes>
     </BrowserRouter>
   );
