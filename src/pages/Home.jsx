@@ -4,6 +4,7 @@ import { getRides } from "../api/rides";
 import SearchBar from "../components/SearchBar";
 import RideCard from "../components/RideCard";
 import "./Home.css";
+import AccountMenu from "../components/AccountMenu";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -36,11 +37,7 @@ export default function Home() {
     <div className="home">
       <header className="home-header">
         <SearchBar value={query} onChange={setQuery} />
-        {userEmail ? (
-          <button onClick={handleLogout}>登出</button>
-        ) : (
-          <Link to="/login">登入</Link>
-        )}
+        <AccountMenu userEmail={userEmail} onLogout={handleLogout} />
       </header>
 
       {loading && <p>載入中…</p>}
