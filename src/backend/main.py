@@ -12,6 +12,7 @@ def apitest():
 
 @app.post("/vertify/email")
 def vertify_email(req: EmailVertification):
+    global EMAILVERTIFICATION_CODE
     if email_exist(req.email):
         return {"exist": True}
     EMAILVERTIFICATION_CODE = smtp.send_vertification_code(req.email)
@@ -23,10 +24,16 @@ def vertify_code(req: CodeVertification):
         create_user(req.user)
         return {"status": True}
     else:
+        # print("req.code= ", req.code)
+        # print("EMAILVERTIFICATION_CODE= ", EMAILVERTIFICATION_CODE)
+        # print("equal,", req.code==EMAILVERTIFICATION_CODE)
+        
         return {"status": False}
 
 @app.post("/login")
 def login(req: LoginFormat):
+    # print("pwd in db:", check_password(req))
+    # print("input pwd:", req.password)
     if check_password(req):
         return {"login": True}
     return {"login": False}

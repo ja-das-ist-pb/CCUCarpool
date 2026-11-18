@@ -35,29 +35,29 @@ export default function Register() {
 
     setErrors({});
     setLoading(true);
-    try {
-      // 回傳 true = Email 已註冊；false = 可註冊，且驗證碼已寄出
-      const exist = await sendVerificationEmail(form.email);
-      if (exist) {
-        setErrors({ email: "此 Email 已被註冊" });
-        return;
-      }
-      navigate("/verify", {
-        state: {
-          user: {
-            email: form.email,
-            name: form.name,
-            student_id: form.student_id,
-            department: form.department,
-            password: form.password,
-          },
-        },
-      });
-    } catch {
-      setErrors({ email: "無法連線到伺服器，請稍後再試" });
-    } finally {
-      setLoading(false);
-    }
+    // try {
+    //   // 回傳 true = Email 已註冊；false = 可註冊，且驗證碼已寄出
+    //   const exist = await sendVerificationEmail(form.email);
+    //   if (exist) {
+    //     setErrors({ email: "此 Email 已被註冊" });
+    //     return;
+    //   }
+    //   navigate("/verify", {
+    //     state: {
+    //       user: {
+    //         email: form.email,
+    //         name: form.name,
+    //         student_id: form.student_id,
+    //         department: form.department,
+    //         password: form.password,
+    //       },
+    //     },
+    //   });
+    // } catch {
+    //   setErrors({ email: "無法連線到伺服器，請稍後再試" });
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (

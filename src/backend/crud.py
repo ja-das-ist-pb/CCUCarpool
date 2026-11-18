@@ -11,7 +11,7 @@ def init_user():
         CREATE TABLE IF NOT EXISTS user (
             id              INTEGER PRIMARY KEY,
             email           TEXT NOT NULL UNIQUE,
-            password_hash   TEXT NOT NULL,
+            password        TEXT NOT NULL,
             name            TEXT NOT NULL,
             student_id      TEXT UNIQUE,
             department      TEXT,
@@ -60,13 +60,12 @@ def email_exist(email: str):
 def create_user(user: User):
     conn = sqlite3.connect(DB_PATH)
     try:
-        user.password_hash = utility.generate_hash(user.password_hash)
         cursor = conn.execute(
             """
-            INSERT INTO user (email, password_hash, name, student_id, department)
+            INSERT INTO user (email, password, name, student_id, department)
             VALUES (?, ?, ?, ?, ?)
             """,
-            (user.email, user.password_hash, user.name, user.student_id, user.department),
+            (user.email, user.password, user.name, user.student_id, user.department),
         )
         conn.commit()
         user.id = cursor.lastrowid
@@ -78,17 +77,17 @@ def check_password(query: LoginFormat):
     conn = sqlite3.connect(DB_PATH)
     try:
         cursor = conn.execute(
-            "SELECT password_hash FROM user WHERE email = ?",
+            "SELECT password FROM user WHERE email = ?",
             (query.email,)
         )
         row = cursor.fetchone()
         if row is None:
             return False
         stored_hash = row[0]
-        return stored_hash == utility.generate_hash(query.password)
+        # return stored_hash == utility.generate_hash(query.password)
+        return stored_hash
     finally:
         conn.close()
-        
 
 init_user()
 init_carpool()

@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 class User(BaseModel):
     id: int | None = None
     email: str
-    password_hash: str
+    password: str
     name: str = Field(max_length=50)
     student_id: str | None = Field(default=None, max_length=20)
     department: str | None = Field(default=None, max_length=100)
