@@ -12,28 +12,71 @@ export default function Login() {
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.email || !form.password) {
-      setError("請輸入 Email 和密碼");
-      return;
-    }
-    setLoading(true);
+
     setError("");
-    try {
-      const ok = await login(form.email, form.password);
-      if (ok) {
-        localStorage.setItem("userEmail", form.email);
-        navigate("/");
-      } else {
-        setError("Email 或密碼錯誤");
-      }
-    } catch {
-      setError("無法連線到伺服器，請稍後再試");
+    setLoading(true);
+
+  try {
+    const response = await fetch("http://localhost:8000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: form.email,
+        passord: form.password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.status === true) {
+      localStorage.setItem("userEmail", form.email);
+      navigate("/");
+    } else {
+      setError("Email 或密碼錯誤");
+    }
+    } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
+
+   
+  const email = form.email.trim();
+
+  // 檢查信箱是否符合指定格式
+  const emailPattern = /^[A-Za-z0-9._%+-]+@ccu\.edu\.tw$/i;
+
+  if (!emailPattern.test(email)) {
+    setError("請輸入正確的學校信箱格式");
+    return;
+  // 下面保留原本的登入程式碼
+  };
+    if (!form.email || !form.password) {
+      setError("請輸入 Email 和密碼");
+      return;
+    }
+    // setLoading(true);
+    // setError("");
+    // try {
+    //   const ok = await login(form.email, form.password);
+    //   if (ok) {
+    //     localStorage.setItem("userEmail", form.email);
+    //     navigate("/");
+    //   } else {
+    //     setError("Email 或密碼錯誤");
+    //   }
+    // } catch {
+    //   setError("無法連線到伺服器，請稍後再試");
+    // } finally {
+    //   setLoading(false);
+  
+  
 
   return (
     <div className="auth-page">
