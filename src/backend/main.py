@@ -41,6 +41,7 @@ def login(req: LoginFormat):
 def carpool_post(req: CarpoolPost):
     try:
         create_post(req)
+        smtp.send_post_successful_message(req)
         return {"success": True}
     except Exception:
         return {"success": False}

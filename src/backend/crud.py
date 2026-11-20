@@ -158,6 +158,15 @@ def search_post(query: CarpoolFilter) -> list[Carpool]:
     finally:
         conn.close()
 
+def search_email(id: int) -> str:
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        row = conn.execute("SELECT email FROM user WHERE id = ?",
+                     (id,)).fetchone()
+        return dict(row)["email"]
+    finally:
+        conn.close()
 
 init_user()
 init_carpool()
