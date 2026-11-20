@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getRide, joinRide, leaveRide } from "../api/rides";
 import "./Auth.css";
+import { getUser } from "../api/session";
 
 export default function RideDetail() {
   const { id } = useParams();
@@ -23,7 +24,7 @@ export default function RideDetail() {
 
   const handleToggle = async () => {
     // 沒登入先去登入
-    if (!localStorage.getItem("userEmail")) {
+    if (!getUser()) {
       navigate("/login");
       return;
     }

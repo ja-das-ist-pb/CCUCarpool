@@ -1,9 +1,9 @@
+import { api } from "./client";
 import { mockRides } from "../mocks/rides";
 
-// 假資料：記錄「我」加入了哪些共乘（之後由後端判斷）
+// 假資料：記錄「我」加入了哪些共乘（等後端做好再換）
 const joined = new Set();
 
-// TODO: 後端做好列表 API 後，改成 api.get("/路徑") 並 return res.data
 export async function getRides() {
   return mockRides;
 }
@@ -32,8 +32,8 @@ export async function leaveRide(id) {
   return true;
 }
 
+// 真的送到後端；回傳 true / false
 export async function createRide(ride) {
-  // TODO: 後端做好後改成 api.post("/路徑", ride)，並 return res.data
-  console.log("發起共乘：", ride);
-  return true;
+  const res = await api.post("/carpool/post", ride);
+  return res.data.success;
 }

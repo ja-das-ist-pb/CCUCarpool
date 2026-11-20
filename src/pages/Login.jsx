@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../api/auth";
 import "./Auth.css";
+import { saveUser } from "../api/session";
 
 export default function Login() {
   const navigate = useNavigate();

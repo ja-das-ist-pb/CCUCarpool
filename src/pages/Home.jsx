@@ -5,6 +5,7 @@ import SearchBar from "../components/SearchBar";
 import RideCard from "../components/RideCard";
 import "./Home.css";
 import AccountMenu from "../components/AccountMenu";
+import { getUser, clearUser } from "../api/session";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [userEmail, setUserEmail] = useState(localStorage.getItem("userEmail"));
+  const [user, setUser] = useState(getUser());
 
   useEffect(() => {
     getRides()
@@ -27,8 +28,8 @@ export default function Home() {
   );
 
   const handleLogout = () => {
-    localStorage.removeItem("userEmail");
-    setUserEmail(null);
+  clearUser();
+  setUser(null);
   };
 
   const handleCreate = () => navigate("/create");
@@ -37,7 +38,7 @@ export default function Home() {
     <div className="home">
       <header className="home-header">
         <SearchBar value={query} onChange={setQuery} />
-        <AccountMenu userEmail={userEmail} onLogout={handleLogout} />
+        <AccountMenu userEmail={user?.email} onLogout={handleLogout} />
       </header>
 
       {loading && <p>載入中…</p>}
