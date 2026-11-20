@@ -1,6 +1,6 @@
 import sqlite3
 from pathlib import Path
-from src.backend.model import User, LoginFormat
+from src.backend.model import *
 from . import utility
 
 DB_PATH = Path(__file__).resolve().parent / "database" / "app.db"
@@ -45,7 +45,7 @@ def init_carpool():
     conn.commit()
     conn.close()
 
-def email_exist(email: str):
+def email_exist(email: str) -> bool:
     conn = sqlite3.connect(DB_PATH)
     try:
         cur = conn.cursor()
@@ -57,23 +57,27 @@ def email_exist(email: str):
     finally:
         conn.close()
 
-def create_user(user: User):
+def create_user(user: User) -> User:
     conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
     try:
-        cursor = conn.execute(
+        row = conn.execute(
             """
             INSERT INTO user (email, password, name, student_id, department)
             VALUES (?, ?, ?, ?, ?)
+            RETURNING id, email, password, name, student_id, department, created_at
             """,
             (user.email, user.password, user.name, user.student_id, user.department),
-        )
+        ).fetchone()
         conn.commit()
-        user.id = cursor.lastrowid
-        return user
+
+        data = dict(row)
+        data["password"] = ""  # 不把密碼回傳出去
+        return User(**data)
     finally:
         conn.close()
 
-def check_password(query: LoginFormat):
+def check_password(query: LoginFormat) -> str:
     conn = sqlite3.connect(DB_PATH)
     try:
         cursor = conn.execute(
@@ -88,6 +92,72 @@ def check_password(query: LoginFormat):
         return stored_hash
     finally:
         conn.close()
+
+def get_user(req: LoginFormat) -> User:
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        row = conn.execute(
+            """
+            SELECT * FROM user WHERE email = ?
+            """,
+            (req.email,),
+        ).fetchone()
+
+        data = dict(row)
+        data["password"] = ""  # 不把密碼回傳出去
+        return User(**data)
+    finally:
+        conn.close()
+
+def create_post(query: CarpoolPost) -> Carpool:
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        row = conn.execute(
+            """
+            INSERT INTO carpool (poster_id, origin, destination, departure_time,
+                                 seats_total, seats_left, cost, note)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            RETURNING id, poster_id, origin, destination, departure_time,
+                      seats_total, seats_left, cost, note, status, created_at, updated_at
+            """,
+            (query.poster_id, query.origin, query.destination,
+             utility.to_db_time(query.departure_time),          # 轉成 UTC 字串
+             query.seats_total, query.seats_left, query.cost, query.note),
+        ).fetchone()
+        conn.commit()
+
+        data = dict(row)
+        data["departure_time"] = utility.from_db_time(data["departure_time"])
+        return Carpool(**data)
+    finally:
+        conn.close()
+
+def search_post(query: CarpoolFilter) -> list[Carpool]:
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        rows = conn.execute(
+            """
+            SELECT * FROM carpool
+            WHERE origin = ?
+              AND destination = ?
+              AND departure_time >= ?
+            ORDER BY departure_time ASC
+            """,
+            (query.origin, query.destination, utility.to_db_time(query.departure_time)),
+        ).fetchall()
+
+        results = []
+        for row in rows:
+            data = dict(row)
+            data["departure_time"] = utility.from_db_time(data["departure_time"])
+            results.append(Carpool(**data))
+        return results
+    finally:
+        conn.close()
+
 
 init_user()
 init_carpool()

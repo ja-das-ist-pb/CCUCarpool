@@ -65,3 +65,13 @@ class CarpoolFilter(BaseModel):
     origin: str = Field(max_length=100)
     destination: str = Field(max_length=100)
     departure_time: datetime
+
+class CarpoolPost(BaseModel):
+    poster_id: int
+    origin: str = Field(max_length=100)
+    destination: str = Field(max_length=100)
+    departure_time: datetime
+    seats_total: int = Field(gt=0)
+    seats_left: int = Field(ge=0)
+    cost: int = Field(default=0, ge=0)
+    note: str | None = None
