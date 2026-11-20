@@ -75,3 +75,7 @@ class CarpoolPost(BaseModel):
     seats_left: int = Field(ge=0)
     cost: int = Field(default=0, ge=0)
     note: str | None = None
+
+class CarpoolJoin(BaseModel):
+    user_id: int
+    carpool_id: int

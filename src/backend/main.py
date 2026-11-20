@@ -49,6 +49,11 @@ def carpool_post(req: CarpoolPost):
 @app.post("/carpool/filter")
 def carpool_filter(req: CarpoolFilter):
     return {"posts": search_post(req)}
+
+@app.post("/carpool/join")
+def carpool_join(req: CarpoolJoin):
+    add_user(req)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host= "0.0.0.0", port= 8000)

@@ -45,6 +45,22 @@ def init_carpool():
     conn.commit()
     conn.close()
 
+def init_carpool_member():
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS carpool_member (
+            id              INTEGER PRIMARY KEY AUTOINCREMENT,
+            carpool_id      INTEGER NOT NULL REFERENCES carpool(id) ON DELETE CASCADE,
+            user_id         INTEGER NOT NULL REFERENCES user(id) ON DELETE CASCADE,
+            status          TEXT NOT NULL DEFAULT 'joined'
+                            CHECK (status IN ('joined', 'cancelled')),
+            joined_at       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE (carpool_id, user_id)
+        )
+    """)
+    conn.commit()
+    conn.close()
+
 def email_exist(email: str) -> bool:
     conn = sqlite3.connect(DB_PATH)
     try:
@@ -144,6 +160,7 @@ def search_post(query: CarpoolFilter) -> list[Carpool]:
             WHERE origin = ?
               AND destination = ?
               AND departure_time >= ?
+              AND seats_left > 0
             ORDER BY departure_time ASC
             """,
             (query.origin, query.destination, utility.to_db_time(query.departure_time)),
@@ -168,5 +185,28 @@ def search_email(id: int) -> str:
     finally:
         conn.close()
 
+def add_user(req: CarpoolJoin):
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
+        conn.execute("""
+            INSERT INTO carpool_user (carpool_id, user_id)
+            VALUES (?, ?)
+            """, (req.carpool_id, req.user_id)
+        )
+        conn.commit()
+        row = conn.execute("SELECT seats_left FROM carpool WHERE id = ?",
+                                      (req.carpool_id,)).fetchone()
+        original_seats = dict(row)["seats_left"]
+        conn.execute("""
+            UPDATE carpool
+            SET seats_left = ?
+            WHERE id = ?    
+        """, (original_seats-1, req.carpool_id))
+        conn.commit()
+    finally:
+        conn.close()
+
 init_user()
 init_carpool()
+init_carpool_member()
