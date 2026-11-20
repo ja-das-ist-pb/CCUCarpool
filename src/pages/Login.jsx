@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../api/auth";
-import "./Auth.css";
 import { saveUser } from "../api/session";
+import "./Auth.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -27,21 +27,21 @@ export default function Login() {
       return;
     }
 
-    // setError("");
-    // setLoading(true);
-    // try {
-    //   const ok = await login(email, form.password);
-    //   if (ok) {
-    //     localStorage.setItem("userEmail", email);
-    //     navigate("/");
-    //   } else {
-    //     setError("Email 或密碼錯誤");
-    //   }
-    // } catch {
-    //   setError("無法連線到伺服器，請稍後再試");
-    // } finally {
-    //   setLoading(false);
-    // }
+    setError("");
+    setLoading(true);
+    try {
+      const data = await login(email, form.password);
+      if (data.login) {
+        saveUser(data.user);
+        navigate("/");
+      } else {
+        setError("Email 或密碼錯誤");
+      }
+    } catch {
+      setError("無法連線到伺服器，請稍後再試");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

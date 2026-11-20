@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getRides } from "../api/rides";
+import { getUser, clearUser } from "../api/session";
 import SearchBar from "../components/SearchBar";
 import RideCard from "../components/RideCard";
-import "./Home.css";
 import AccountMenu from "../components/AccountMenu";
-import { getUser, clearUser } from "../api/session";
+import "./Home.css";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -28,8 +28,8 @@ export default function Home() {
   );
 
   const handleLogout = () => {
-  clearUser();
-  setUser(null);
+    clearUser();
+    setUser(null);
   };
 
   const handleCreate = () => navigate("/create");
