@@ -1,8 +1,31 @@
 .home { max-width: 900px; margin: 0 auto; padding: 16px; }
-.home-header { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; }
-.search-bar { flex: 1; padding: 10px 16px; border: 2px solid #333; border-radius: 999px; font-size: 16px; }
+.home-header { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+
+/* 搜尋區 */
+.search-panel { flex: 1; display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+.search-input {
+  flex: 1 1 140px;
+  min-width: 0;
+  padding: 10px 16px;
+  border: 2px solid #333;
+  border-radius: 999px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.search-time { display: flex; flex-direction: column; gap: 2px; flex: 1 1 220px; font-size: 12px; }
+.search-time .search-input { cursor: pointer; }
+.search-clear {
+  padding: 10px 16px;
+  border: 2px solid #333;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 .ride-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.ride-card { border: 2px solid #333; border-radius: 16px; padding: 16px; display: block; text-decoration: none;}
+.ride-card { border: 2px solid #333; border-radius: 16px; padding: 16px; display: block; text-decoration: none; }
 .ride-poster { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #333;
           display: inline-flex; align-items: center; justify-content: center; }

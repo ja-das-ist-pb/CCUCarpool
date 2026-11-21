@@ -7,10 +7,12 @@ import RideCard from "../components/RideCard";
 import AccountMenu from "../components/AccountMenu";
 import "./Home.css";
 
+const EMPTY_FILTERS = { origin: "", destination: "", time: "" };
+
 export default function Home() {
   const navigate = useNavigate();
   const [rides, setRides] = useState([]);
-  const [query, setQuery] = useState("");
+  const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [user, setUser] = useState(getUser());
@@ -22,10 +24,16 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  const keyword = query.trim();
-  const filtered = rides.filter(
-    (r) => r.origin.includes(keyword) || r.destination.includes(keyword)
-  );
+  const origin = filters.origin.trim();
+  const destination = filters.destination.trim();
+
+  const filtered = rides.filter((r) => {
+    if (origin && !r.origin.includes(origin)) return false;
+    if (destination && !r.destination.includes(destination)) return false;
+    if (filters.time && new Date(r.departure_time) < new Date(filters.time))
+      return false;
+    return true;
+  });
 
   const handleLogout = () => {
     clearUser();
@@ -37,7 +45,11 @@ export default function Home() {
   return (
     <div className="home">
       <header className="home-header">
-        <SearchBar value={query} onChange={setQuery} />
+        <SearchBar
+          filters={filters}
+          onChange={setFilters}
+          onClear={() => setFilters(EMPTY_FILTERS)}
+        />
         <AccountMenu userEmail={user?.email} onLogout={handleLogout} />
       </header>
 

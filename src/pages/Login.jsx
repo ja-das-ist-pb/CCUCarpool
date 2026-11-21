@@ -22,9 +22,9 @@ export default function Login() {
       setError("請輸入 Email 和密碼");
       return;
     }
-    if (!email.toLowerCase().endsWith("@alum.ccu.edu.tw")) {
-      setError("請輸入正確的學校信箱格式（@alum.ccu.edu.tw）");
-      return;
+    if (!/@(alum\.)?ccu\.edu\.tw$/.test(email)) {
+       setError("請輸入正確的學校信箱格式（@ccu.edu.tw 或 @alum.ccu.edu.tw）");
+    return; 
     }
 
     setError("");

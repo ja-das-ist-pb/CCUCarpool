@@ -25,8 +25,8 @@ export default function Register() {
     const email = form.email.trim().toLowerCase();
 
     const newErrors = {};
-    if (!email.endsWith("@alum.ccu.edu.tw"))
-      newErrors.email = "請使用 @alum.ccu.edu.tw 結尾的學校 Email";
+    if (!/@(alum\.)?ccu\.edu\.tw$/.test(email))
+      newErrors.email = "請使用 @ccu.edu.tw 或 @alum.ccu.edu.tw 結尾的學校 Email";
     if (!form.name) newErrors.name = "請輸入使用者名稱";
     if (form.password.length < 8) newErrors.password = "密碼至少 8 個字元";
     if (form.password !== form.confirm) newErrors.confirm = "兩次密碼不一致";
