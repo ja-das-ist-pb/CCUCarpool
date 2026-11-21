@@ -1,3 +1,5 @@
+import { PLACES } from "../constants/places";
+
 export default function SearchBar({ filters, onChange, onClear }) {
   const set = (name) => (e) =>
     onChange({ ...filters, [name]: e.target.value });
@@ -9,17 +11,19 @@ export default function SearchBar({ filters, onChange, onClear }) {
       <input
         className="search-input"
         placeholder="出發地"
+        list="places"
         value={filters.origin}
         onChange={set("origin")}
       />
       <input
         className="search-input"
         placeholder="目的地"
+        list="places"
         value={filters.destination}
         onChange={set("destination")}
       />
-      <label className="search-time">
-        <span>此時間之後出發</span>
+      <label className="search-time" title="只顯示這個時間之後出發的共乘">
+        <span>之後出發</span>
         <input
           className="search-input"
           type="datetime-local"
@@ -39,6 +43,12 @@ export default function SearchBar({ filters, onChange, onClear }) {
           清除
         </button>
       )}
+
+      <datalist id="places">
+        {PLACES.map((p) => (
+          <option key={p} value={p} />
+        ))}
+      </datalist>
     </div>
   );
 }

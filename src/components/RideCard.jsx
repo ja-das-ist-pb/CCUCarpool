@@ -5,12 +5,13 @@ export default function RideCard({ ride }) {
     month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit",
   });
   const full = ride.seats_left === 0;
+  const poster = ride.poster_name ?? `使用者 #${ride.poster_id}`;
 
   return (
-    <Link to={`/rides/${ride.id}`} className="ride-card">
+    <Link to={`/rides/${ride.id}`} state={{ ride }} className="ride-card">
       <div className="ride-poster">
-        <span className="avatar">{ride.poster_name?.[0] ?? "?"}</span>
-        <span>{ride.poster_name}</span>
+        <span className="avatar">{poster[0] === "使" ? "?" : poster[0]}</span>
+        <span>{poster}</span>
       </div>
       <div className="ride-route">
         {ride.origin} → {ride.destination}

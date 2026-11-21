@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { createRide } from "../api/rides";
 import { getUser } from "../api/session";
+import { PLACES } from "../constants/places";
 import "./Auth.css";
 
 // 產生「現在」的格式（YYYY-MM-DDTHH:mm），讓月曆不能選過去的時間
@@ -68,7 +69,7 @@ export default function CreateRide() {
         note: form.note.trim() || null,
       });
       if (ok) {
-        navigate("/");
+        navigate("/", { state: { posted: true } });
       } else {
         setErrors({ submit: "發起失敗，請稍後再試" });
       }
@@ -88,6 +89,7 @@ export default function CreateRide() {
           <label>起點</label>
           <input
             name="origin"
+            list="places"
             maxLength={100}
             value={form.origin}
             onChange={handleChange}
@@ -99,6 +101,7 @@ export default function CreateRide() {
           <label>終點</label>
           <input
             name="destination"
+            list="places"
             maxLength={100}
             value={form.destination}
             onChange={handleChange}
@@ -173,6 +176,12 @@ export default function CreateRide() {
         <p className="auth-link">
           <Link to="/">返回首頁</Link>
         </p>
+
+        <datalist id="places">
+          {PLACES.map((p) => (
+            <option key={p} value={p} />
+          ))}
+        </datalist>
       </form>
     </div>
   );

@@ -40,8 +40,6 @@ export default function Home() {
     setUser(null);
   };
 
-  const handleCreate = () => navigate("/create");
-
   return (
     <div className="home">
       <header className="home-header">
@@ -63,7 +61,7 @@ export default function Home() {
         ))}
       </div>
 
-      <button className="fab" onClick={handleCreate}>
+      <button className="fab" onClick={() => navigate("/create")}>
         發起共乘
       </button>
     </div>

@@ -12,8 +12,27 @@
   font-size: 16px;
   box-sizing: border-box;
 }
-.search-time { display: flex; flex-direction: column; gap: 2px; flex: 1 1 220px; font-size: 12px; }
-.search-time .search-input { cursor: pointer; }
+.search-time {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 2px solid #333;
+  border-radius: 999px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.search-time .search-input {
+  flex: 0 0 auto;
+  padding: 11px 0;
+  border: none;
+  border-radius: 0;
+  font-size: 14px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
 .search-clear {
   padding: 10px 16px;
   border: 2px solid #333;
@@ -77,3 +96,15 @@
 }
 
 .account-email { margin: 0; font-size: 14px; word-break: break-all; }
+
+.search-button {
+  padding: 10px 20px;
+  border: 2px solid #333;
+  border-radius: 999px;
+  background: #111;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+.hint { color: #666; text-align: center; margin: 32px 0; }
+.notice { padding: 10px 16px; border: 2px solid #333; border-radius: 12px; margin-bottom: 16px; }

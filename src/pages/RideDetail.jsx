@@ -1,62 +1,54 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import { getRide, joinRide, leaveRide } from "../api/rides";
-import "./Auth.css";
+import { useState } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import { joinRide } from "../api/rides";
 import { getUser } from "../api/session";
+import "./Auth.css";
 
 export default function RideDetail() {
-  const { id } = useParams();
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const [ride, setRide] = useState(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [ride, setRide] = useState(state?.ride ?? null);
+  const [joined, setJoined] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
 
-  const load = () =>
-    getRide(id)
-      .then(setRide)
-      .catch(() => setError("找不到這筆共乘"))
-      .finally(() => setLoading(false));
+  // 重新整理頁面後資料會不見（後端沒有詳情 API），請使用者回首頁重新搜尋
+  if (!ride)
+    return (
+      <div className="auth-page">
+        <div className="auth-card">
+          <p>找不到這筆共乘的資料，請回首頁重新搜尋。</p>
+          <Link to="/">返回首頁</Link>
+        </div>
+      </div>
+    );
 
-  useEffect(() => {
-    load();
-  }, [id]);
+  const user = getUser();
+  const isOwner = user && ride.poster_id === user.id;
+  const full = ride.seats_left === 0;
+  const poster = ride.poster_name ?? `使用者 #${ride.poster_id}`;
+  const time = new Date(ride.departure_time).toLocaleString("zh-TW", {
+    month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit",
+  });
+  const perPerson = Math.ceil(ride.cost / ride.seats_total);
 
-  const handleToggle = async () => {
-    // 沒登入先去登入
-    if (!getUser()) {
+  const handleJoin = async () => {
+    if (!user) {
       navigate("/login");
       return;
     }
     setBusy(true);
     setError("");
     try {
-      const ok = ride.joined ? await leaveRide(id) : await joinRide(id);
-      if (!ok) setError("操作失敗，可能已額滿");
-      await load();
+      await joinRide(ride.id, user.id);
+      setJoined(true);
+      setRide({ ...ride, seats_left: ride.seats_left - 1 });
     } catch {
-      setError("無法連線到伺服器，請稍後再試");
+      setError("加入失敗，可能已額滿或已加入過，請稍後再試");
     } finally {
       setBusy(false);
     }
   };
-
-  if (loading) return <div className="auth-page"><p>載入中…</p></div>;
-  if (!ride)
-    return (
-      <div className="auth-page">
-        <div className="auth-card">
-          <p className="auth-error">{error}</p>
-          <Link to="/">返回首頁</Link>
-        </div>
-      </div>
-    );
-
-  const time = new Date(ride.departure_time).toLocaleString("zh-TW", {
-    month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit",
-  });
-  const full = ride.seats_left === 0;
-  const perPerson = Math.ceil(ride.cost / ride.seats_total);
 
   return (
     <div className="auth-page">
@@ -65,26 +57,35 @@ export default function RideDetail() {
           {ride.origin} → {ride.destination}
         </h2>
 
-        <div className="detail-row"><span>發起人</span><span>{ride.poster_name}</span></div>
+        <div className="detail-row"><span>發起人</span><span>{poster}</span></div>
         <div className="detail-row"><span>出發時間</span><span>{time}</span></div>
         <div className="detail-row">
           <span>座位</span>
           <span>{full ? "已額滿" : `剩 ${ride.seats_left} / ${ride.seats_total} 位`}</span>
         </div>
         <div className="detail-row"><span>預估車資</span><span>NT$ {ride.cost}</span></div>
-        <div className="detail-row">
-          <span>坐滿時每人約</span><span>NT$ {perPerson}</span>
-        </div>
-        {ride.note && <div className="detail-row"><span>備註</span><span>{ride.note}</span></div>}
+        {ride.cost > 0 && (
+          <div className="detail-row">
+            <span>坐滿時每人約</span><span>NT$ {perPerson}</span>
+          </div>
+        )}
+        {ride.note && (
+          <div className="detail-row"><span>備註</span><span>{ride.note}</span></div>
+        )}
 
         {error && <p className="auth-error">{error}</p>}
 
-        {(ride.joined || !full) && (
-          <button className="auth-button" onClick={handleToggle} disabled={busy}>
-            {busy ? "處理中…" : ride.joined ? "退出共乘" : "加入共乘"}
+        {isOwner ? (
+          <p className="auth-link">這是你發起的共乘</p>
+        ) : joined ? (
+          <p className="auth-link">你已加入這個共乘 ✓</p>
+        ) : full ? (
+          <p className="auth-link">這個共乘已經額滿了</p>
+        ) : (
+          <button className="auth-button" onClick={handleJoin} disabled={busy}>
+            {busy ? "處理中…" : "加入共乘"}
           </button>
         )}
-        {!ride.joined && full && <p className="auth-link">這個共乘已經額滿了</p>}
 
         <p className="auth-link"><Link to="/">返回首頁</Link></p>
       </div>
