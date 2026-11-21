@@ -52,7 +52,7 @@ def carpool_filter(req: CarpoolFilter):
 
 @app.post("/carpool/join")
 def carpool_join(req: CarpoolJoin):
-    add_user(req)
+    join_user(req)
 
 if __name__ == "__main__":
     import uvicorn

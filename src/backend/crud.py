@@ -185,7 +185,7 @@ def search_email(id: int) -> str:
     finally:
         conn.close()
 
-def add_user(req: CarpoolJoin):
+def join_user(req: CarpoolJoin):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     try:
