@@ -190,7 +190,7 @@ def join_user(req: CarpoolJoin):
     conn.row_factory = sqlite3.Row
     try:
         conn.execute("""
-            INSERT INTO carpool_user (carpool_id, user_id)
+            INSERT INTO carpool_member (carpool_id, user_id)
             VALUES (?, ?)
             """, (req.carpool_id, req.user_id)
         )
