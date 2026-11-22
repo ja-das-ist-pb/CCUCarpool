@@ -150,27 +150,31 @@ def create_post(query: CarpoolPost) -> Carpool:
     finally:
         conn.close()
 
-def search_post(query: CarpoolFilter) -> list[Carpool]:
+def search_post(query: CarpoolFilter) -> list[CarpoolFilterReturn]:
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     try:
         rows = conn.execute(
             """
-            SELECT * FROM carpool
-            WHERE origin = ?
-              AND destination = ?
-              AND departure_time >= ?
-              AND seats_left > 0
-            ORDER BY departure_time ASC
+            SELECT c.*, u.name AS poster_name
+            FROM carpool c
+            JOIN user u ON u.id = c.poster_id
+            WHERE c.origin = ?
+              AND c.destination = ?
+              AND c.departure_time >= ?
+              AND c.seats_left > 0
+              AND c.status = 'open'
+            ORDER BY c.departure_time ASC
             """,
-            (query.origin, query.destination, utility.to_db_time(query.departure_time)),
+            (query.origin, query.destination,
+             utility.to_db_time(query.departure_time)),
         ).fetchall()
 
         results = []
         for row in rows:
             data = dict(row)
             data["departure_time"] = utility.from_db_time(data["departure_time"])
-            results.append(Carpool(**data))
+            results.append(CarpoolFilterReturn(**data))
         return results
     finally:
         conn.close()
@@ -198,11 +202,15 @@ def join_user(req: CarpoolJoin):
         row = conn.execute("SELECT seats_left FROM carpool WHERE id = ?",
                                       (req.carpool_id,)).fetchone()
         original_seats = dict(row)["seats_left"]
-        conn.execute("""
-            UPDATE carpool
-            SET seats_left = ?
-            WHERE id = ?    
-        """, (original_seats-1, req.carpool_id))
+        cur = conn.execute("""
+                UPDATE carpool
+                SET seats_left = seats_left - 1,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ? AND seats_left > 0 AND status = 'open'
+            """, (req.carpool_id,))
+        if cur.rowcount == 0:
+            conn.rollback()
+            raise ValueError("Can't Join: Seats are full")
         conn.commit()
     finally:
         conn.close()

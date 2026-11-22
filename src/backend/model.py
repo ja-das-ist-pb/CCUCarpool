@@ -79,3 +79,18 @@ class CarpoolPost(BaseModel):
 class CarpoolJoin(BaseModel):
     user_id: int
     carpool_id: int
+
+class CarpoolFilterReturn(BaseModel):
+    id: int | None = None
+    poster_id: int
+    poster_name: str
+    origin: str = Field(max_length=100)
+    destination: str = Field(max_length=100)
+    departure_time: datetime
+    seats_total: int = Field(gt=0)
+    seats_left: int = Field(ge=0)                    
+    cost: int = Field(default=0, ge=0)
+    note: str | None = None
+    status: Literal["open", "full", "closed", "cancelled"] = "open"
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
