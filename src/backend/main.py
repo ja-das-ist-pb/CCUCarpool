@@ -2,9 +2,19 @@ from fastapi import FastAPI
 from src.backend.model import *
 from src.backend.crud import *
 from . import smtp
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 EMAILVERTIFICATION_CODE = None
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173",
+                   "http://127.0.0.1:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/apitest")
 def apitest():
@@ -53,6 +63,7 @@ def carpool_filter(req: CarpoolFilter):
 @app.post("/carpool/join")
 def carpool_join(req: CarpoolJoin):
     join_user(req)
+    return {"success": True}
 
 if __name__ == "__main__":
     import uvicorn
