@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { sendVerificationEmail } from "../api/auth";
 import "./Auth.css";
+import Logo from "../components/Logo";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ export default function Register() {
   return (
     <div className="auth-page">
       <form className="auth-card" onSubmit={handleSubmit}>
+        <Logo />
         <h2 className="auth-title">註冊</h2>
 
         <div className="field">

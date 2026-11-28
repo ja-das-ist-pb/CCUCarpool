@@ -70,3 +70,4 @@
   border-bottom: 1px solid #ddd;
 }
 .detail-row span:first-child { font-weight: 500; }
+.auth-card .logo { align-self: center; }

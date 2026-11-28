@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { login } from "../api/auth";
 import { saveUser } from "../api/session";
 import "./Auth.css";
+import Logo from "../components/Logo";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -47,6 +48,7 @@ export default function Login() {
   return (
     <div className="auth-page">
       <form className="auth-card" onSubmit={handleSubmit}>
+        <Logo />
         <h2 className="auth-title">登入</h2>
 
         <div className="field">

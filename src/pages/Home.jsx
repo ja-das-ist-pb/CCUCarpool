@@ -6,6 +6,7 @@ import SearchBar from "../components/SearchBar";
 import RideCard from "../components/RideCard";
 import AccountMenu from "../components/AccountMenu";
 import "./Home.css";
+import Logo from "../components/Logo";
 
 const EMPTY_FILTERS = { origin: "", destination: "", time: "" };
 
@@ -42,6 +43,7 @@ export default function Home() {
 
   return (
     <div className="home">
+    <Logo />
       <header className="home-header">
         <SearchBar
           filters={filters}

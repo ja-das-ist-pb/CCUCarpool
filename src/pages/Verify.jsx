@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import { verifyCode } from "../api/auth";
 import "./Auth.css";
+import Logo from "../components/Logo";
 
 export default function Verify() {
   const { state } = useLocation();
@@ -38,6 +39,7 @@ export default function Verify() {
   return (
     <div className="auth-page">
       <form className="auth-card" onSubmit={handleSubmit}>
+        <Logo />
         <h2 className="auth-title">Enter verification code</h2>
         <p>驗證碼已寄到 {state.user.email}</p>
 
